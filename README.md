@@ -53,7 +53,7 @@ This project implements a **Smart Warehouse AMR** capable of:
 
 ### SLAM Map
 <!-- Replace with your actual screenshot -->
-![SLAM Map](docs/images/slam_map.png)
+![SLAM Map](docs1/Map.png)
 *2D occupancy grid map generated using slam_toolbox*
 
 ### Circuit Diagram
@@ -67,8 +67,17 @@ This project implements a **Smart Warehouse AMR** capable of:
 
 ### Physical Robot
 <!-- Replace with your actual photo -->
-![Physical Robot](docs/images/real_robot.jpg)
+![Physical Robot](docs1/physical_robot.jpeg)
 *Physical AMR with RPLiDAR A1, Arduino Mega, L298N motor driver on circular chassis*
+
+
+### Gif
+
+*Moving Bot*  
+![Moving BOT](docs1/MovingBOT.gif)
+
+*working simulation(Gazebo & Rviz)*  
+![Gazebo Rviz](docs1/GazeboRviz.gif)
 
 ---
 
