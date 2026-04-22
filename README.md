@@ -39,7 +39,6 @@ This project implements a **Smart Warehouse AMR** capable of:
 
 ## 🎥 Demonstrations
 
-> Add your screenshots and GIFs here after recording
 
 ### Gazebo Simulation
 <!-- Replace with your actual screenshot -->
