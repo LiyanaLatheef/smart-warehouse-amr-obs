@@ -56,7 +56,7 @@ This project implements a **Smart Warehouse AMR** capable of:
 ![SLAM Map](docs/images/slam_map.png)
 *2D occupancy grid map generated using slam_toolbox*
 
-###Circuit Diagram
+### Circuit Diagram
 <!-- Replace with your actual photo -->
 ![Physical Robot](docs/diagram.jpeg)
 
