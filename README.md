@@ -177,7 +177,7 @@ sudo apt install ros-humble-desktop -y
 sudo apt install ros-humble-navigation2 ros-humble-nav2-bringup -y
 sudo apt install ros-humble-slam-toolbox -y
 source /opt/ros/humble/setup.bash
-```
+```###Phase 2: Map & Transformation
 
 ### Clone and Build
 
@@ -223,39 +223,42 @@ source install/setup.bash
 🚀 Gazebo & RViz Simulation
 
 Open separate terminals for each step. Be sure to source /opt/ros/humble/setup.bash and source ~/digital_twin_ws/install/setup.bash in each.
+```
+### Phase 1: Environment & Robot Spawn
 
-###Phase 1: Environment & Robot Spawn
+**1. Gazebo:**  
+`gazebo ~/digital_twin_ws/src/two_wheel_robot/worlds/warehouse.world --verbose -s libgazebo_ros_init.so -s libgazebo_ros_factory.so`
 
-1. Gazebo:  
-gazebo ~/digital_twin_ws/src/two_wheel_robot/worlds/warehouse.world --verbose -s libgazebo_ros_init.so -s libgazebo_ros_factory.so
+**2. Robot State:**  
+`ros2 run robot_state_publisher robot_state_publisher --ros-args -p use_sim_time:=true -p robot_description:="$(xacro ~/digital_twin_ws/src/two_wheel_robot/urdf/two_wheel_robot.urdf)"`
 
-2. Robot State:  
-ros2 run robot_state_publisher robot_state_publisher --ros-args -p use_sim_time:=true -p robot_description:="$(xacro ~/digital_twin_ws/src/two_wheel_robot/urdf/two_wheel_robot.urdf)"
+**3. Joint State:**  
+`ros2 run joint_state_publisher joint_state_publisher --ros-args -p use_sim_time:=true`
 
-3. Joint State:  
-ros2 run joint_state_publisher joint_state_publisher --ros-args -p use_sim_time:=true
+**4. Spawn Entity:**  
+`ros2 run gazebo_ros spawn_entity.py -file ~/digital_twin_ws/src/two_wheel_robot/urdf/two_wheel_robot.urdf -entity robot1 -x 0 -y 0 -z 0.1`
 
-4. Spawn Entity:  
-ros2 run gazebo_ros spawn_entity.py -file ~/digital_twin_ws/src/two_wheel_robot/urdf/two_wheel_robot.urdf -entity robot1 -x 0 -y 0 -z 0.1
 
-###Phase 2: Map & Transformation
-5. Map Server:  
-ros2 run nav2_map_server map_server --ros-args -p yaml_filename:=~/my_warehouse_map.yaml -p use_sim_time:=true
-6. Lifecycle:  
-ros2 lifecycle set /map_server configure && ros2 lifecycle set /map_server activate
-7. Static TF:  
- ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 map odom
+### Phase 2: Map & Transformation
 
-###Phase 3: Autonomous Logic & Visuals
-8. Obstacle Avoidance:  
-ros2 run obstacle_avoidance avoid --ros-args -p use_sim_time:=true
-9. Velocity Smoother:  
-ros2 run obstacle_avoidance vel_smoother --ros-args -p use_sim_time:=true
-10. RViz2:  
-rviz2 
+**5. Map Server:**  
+`ros2 run nav2_map_server map_server --ros-args -p yaml_filename:=~/my_warehouse_map.yaml -p use_sim_time:=true`  
+**6. Lifecycle:**  
+`ros2 lifecycle set /map_server configure && ros2 lifecycle set /map_server activate`  
+**7. Static TF:**  
+`ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 map odom`  
+
+### Phase 3: Autonomous Logic & Visuals
+
+**8. Obstacle Avoidance:**  
+`ros2 run obstacle_avoidance avoid --ros-args -p use_sim_time:=true`  
+**9. Velocity Smoother:**  
+`ros2 run obstacle_avoidance vel_smoother --ros-args -p use_sim_time:=true`  
+**10. RViz2:**  
+`rviz2` 
 (Add Map, RobotModel, and LaserScan /scan).
 
-```
+
 ### SLAM Mapping (Optional)
 
 ```bash
@@ -285,13 +288,13 @@ In RViz: set Fixed Frame → `map`, click **2D Pose Estimate**, then **2D Goal P
 
 ### 🛠️ Physical Hardware Setup
 
-    Baud Rate: `115200`  
+Baud Rate: `115200`  
 
-    Serial Commands: `'F'` (Forward), `'L'` (Left), `'R'` (Right), `'S'` (Stop)  
+Serial Commands: `'F'` (Forward), `'L'` (Left), `'R'` (Right), `'S'` (Stop)  
 
-    Permissions: Ensure the RPi has access to the USB ports:  
-    `sudo chmod 777 /dev/ttyUSB0 (LiDAR)`  
-    `sudo chmod 666 /dev/ttyACM0 (Arduino)`
+Permissions: Ensure the RPi has access to the USB ports:  
+`sudo chmod 777 /dev/ttyUSB0 (LiDAR)`  
+`sudo chmod 666 /dev/ttyACM0 (Arduino)`
 
 ### Physical Robot (Raspberry Pi)
 
@@ -436,12 +439,7 @@ The warehouse map was generated using `slam_toolbox` in async mapping mode.
 
 ---
 
-## 📄 License
 
-This project is licensed under the MIT License.
 
----
 
-<div align="center">
-Made with ❤️ at Yenepoya Institute | BCA AIML Robotics 2026
-</div>
+
