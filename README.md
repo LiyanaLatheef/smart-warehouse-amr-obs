@@ -43,12 +43,12 @@ This project implements a **Smart Warehouse AMR** capable of:
 
 ### Gazebo Simulation
 <!-- Replace with your actual screenshot -->
-![Gazebo Simulation](docs/images/gazebo_simulation.png)
+![Gazebo Simulation](docs1/gazebospwn.png)
 *Robot navigating warehouse in Gazebo 11 with LiDAR scan visible*
 
 ### RViz Visualization
 <!-- Replace with your actual screenshot -->
-![RViz LiDAR](docs/images/rviz_laserscan.png)
+![RViz LiDAR](docs1/rviz.png)
 *Live LiDAR scan and robot model in RViz2*
 
 ### SLAM Map
