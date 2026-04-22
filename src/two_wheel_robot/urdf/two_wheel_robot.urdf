@@ -240,6 +240,10 @@
     <odometry_topic>odom</odometry_topic>
 
     <publish_odom>true</publish_odom>
+    <publish_odom_tf>true</publish_odom_tf>
+    <odometry_frame>odom</odometry_frame>
+    <robot_base_frame>base_link</robot_base_frame>
+
 
   </plugin>
 

@@ -11,7 +11,7 @@ class ObstacleAvoider(Node):
         self.publisher_ = self.create_publisher(Twist, '/cmd_vel_raw', 10)
 
         self.safe_distance    = 0.5   # stop and turn
-        self.caution_distance = 1.0   # slow down and steer
+        self.caution_distance = 3.0   # slow down and steer
         self.forward_speed    = 0.2
         self.turn_speed       = 0.5
 
