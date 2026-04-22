@@ -58,7 +58,7 @@ This project implements a **Smart Warehouse AMR** capable of:
 
 ### Circuit Diagram
 <!-- Replace with your actual photo -->
-![Physical Robot](docs/diagram.jpeg)
+![Circuit Diagram](docs/diagram.jpeg)
 
 ### Nav2 Navigation
 <!-- Replace with your actual screenshot -->
