@@ -183,8 +183,8 @@ source /opt/ros/humble/setup.bash
 
 ```bash
 # Clone the repository
-git clone https://github.com/LiyanaLatheef/Smart-Warehouse-AMR-with-Dynamic-Obstacle-Avoidance.git
-cd Smart-Warehouse-AMR-with-Dynamic-Obstacle-Avoidance
+git clone [https://github.com/LiyanaLatheef/smart-warehouse-amr-obs.git](https://github.com/LiyanaLatheef/smart-warehouse-amr-obs.git)
+cd smart-warehouse-amr-obs
 
 # Build
 colcon build
@@ -219,39 +219,44 @@ source install/setup.bash
 ## 🚀 Running the Project
 
 ### Simulation (Gazebo + RViz)
-
-Open 6 terminals:
-
 ```bash
-# T1 — Launch Gazebo warehouse
-source /opt/ros/humble/setup.bash && source ~/digital_twin_ws/install/setup.bash
-gazebo ~/digital_twin_ws/src/two_wheel_robot/worlds/warehouse.world \
-  --verbose -s libgazebo_ros_init.so -s libgazebo_ros_factory.so
+🚀 Gazebo & RViz Simulation
 
-# T2 — Spawn robot
-ros2 run gazebo_ros spawn_entity.py \
-  -file ~/digital_twin_ws/src/two_wheel_robot/urdf/two_wheel_robot.urdf \
-  -entity robot1 -x 0 -y 0 -z 0.1
+Open separate terminals for each step. Be sure to source /opt/ros/humble/setup.bash and source ~/digital_twin_ws/install/setup.bash in each.
 
-# T3 — Robot state publisher
-ros2 run robot_state_publisher robot_state_publisher \
-  --ros-args \
-  -p robot_description:="$(cat ~/digital_twin_ws/src/two_wheel_robot/urdf/two_wheel_robot.urdf)" \
-  -p use_sim_time:=true
+###Phase 1: Environment & Robot Spawn
 
-# T4 — Joint state publisher
-ros2 run joint_state_publisher joint_state_publisher \
-  --ros-args -p use_sim_time:=true
+1. Gazebo:  
+gazebo ~/digital_twin_ws/src/two_wheel_robot/worlds/warehouse.world --verbose -s libgazebo_ros_init.so -s libgazebo_ros_factory.so
 
-# T5 — Obstacle avoidance
-ros2 run obstacle_avoidance vel_smoother &
-ros2 run obstacle_avoidance avoid
+2. Robot State:  
+ros2 run robot_state_publisher robot_state_publisher --ros-args -p use_sim_time:=true -p robot_description:="$(xacro ~/digital_twin_ws/src/two_wheel_robot/urdf/two_wheel_robot.urdf)"
 
-# T6 — RViz visualization
-rviz2
+3. Joint State:  
+ros2 run joint_state_publisher joint_state_publisher --ros-args -p use_sim_time:=true
+
+4. Spawn Entity:  
+ros2 run gazebo_ros spawn_entity.py -file ~/digital_twin_ws/src/two_wheel_robot/urdf/two_wheel_robot.urdf -entity robot1 -x 0 -y 0 -z 0.1
+
+###Phase 2: Map & Transformation
+5. Map Server:  
+ros2 run nav2_map_server map_server --ros-args -p yaml_filename:=~/my_warehouse_map.yaml -p use_sim_time:=true
+6. Lifecycle:  
+ros2 lifecycle set /map_server configure && ros2 lifecycle set /map_server activate
+7. Static TF:  
+ ros2 run tf2_ros static_transform_publisher 0 0 0 0 0 0 map odom
+
+###Phase 3: Autonomous Logic & Visuals
+8. Obstacle Avoidance:  
+ros2 run obstacle_avoidance avoid --ros-args -p use_sim_time:=true
+9. Velocity Smoother:  
+ros2 run obstacle_avoidance vel_smoother --ros-args -p use_sim_time:=true
+10. RViz2:  
+rviz2 
+(Add Map, RobotModel, and LaserScan /scan).
+
 ```
-
-### SLAM Mapping
+### SLAM Mapping (Optional)
 
 ```bash
 # While simulation is running, launch SLAM
@@ -278,24 +283,29 @@ ros2 launch nav2_bringup bringup_launch.py \
 
 In RViz: set Fixed Frame → `map`, click **2D Pose Estimate**, then **2D Goal Pose**.
 
+### 🛠️ Physical Hardware Setup
+
+    Baud Rate: `115200`  
+
+    Serial Commands: `'F'` (Forward), `'L'` (Left), `'R'` (Right), `'S'` (Stop)  
+
+    Permissions: Ensure the RPi has access to the USB ports:  
+    `sudo chmod 777 /dev/ttyUSB0 (LiDAR)`  
+    `sudo chmod 666 /dev/ttyACM0 (Arduino)`
+
 ### Physical Robot (Raspberry Pi)
 
-SSH into RPi and open 4 terminals:
+SSH into your Raspberry Pi and open two terminals:
 
 ```bash
-# T1 — LiDAR (give it a gentle flick to help motor start)
-sudo chmod 777 /dev/ttyUSB0
-ros2 launch rplidar_ros rplidar_a1_launch.py
+# T1 — Launch LiDAR (give it a gentle flick to help motor start)
+source /opt/ros/humble/setup.bash
+ros2 launch rplidar_ros rplidar_a1_launch.py serial_port:=/dev/ttyUSB0
 
-# T2 — Serial bridge to Arduino
-sudo chmod 666 /dev/ttyACM0
-ros2 run obstacle_avoidance serial_bridge
+# T2 — Terminal 2: Hardware Brain (Avoidance Logic)
 
-# T3 — Velocity smoother
-ros2 run obstacle_avoidance vel_smoother
+python3 ~/digital_twin_ws/src/two_wheel_robot/two_wheel_robot/avoid_physical.py
 
-# T4 — Obstacle avoidance brain
-ros2 run obstacle_avoidance avoid
 ```
 
 ---
@@ -349,7 +359,13 @@ float speed_limit = 1.5;  // 75% max speed (safe for warehouse)
 // Deadzone: 124–130 = stop (prevents motor hum)
 // constrain(pwm, 0, 255) prevents rollover bug
 ```
+*The `avoid_physical` script (`avoid.py`) utilizes zone-based filtering to make real-time decisions:*
 
+- Chassis Filter: Ignores LiDAR data between `0.2m - 0.3m` to prevent the robot from seeing its own frame.
+
+- Safe Distance: Set to `0.6m` for stable warehouse navigation.
+
+- Decision Logic: If `Front < safe_distance`, the robot compares `Left` vs `Right` clearances and executes a pivot turn toward the more open path via Direct Serial commands.
 ---
 
 ## 🗺️ SLAM Map
