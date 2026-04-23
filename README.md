@@ -33,7 +33,7 @@ This project implements a **Smart Warehouse AMR** capable of:
 | Sensor | Simulated LiDAR | RPLiDAR A1 |
 | Motor Driver | Gazebo Diff Drive Plugin | L298N + Arduino Mega |
 | Navigation | Nav2 + SLAM Toolbox | avoid.py + vel_smoother |
-| Communication | ROS2 Topics | ROS2 + Serial (57600 baud) |
+| Communication | ROS2 Topics | ROS2 + Serial (115200 baud) |
 
 ---
 
