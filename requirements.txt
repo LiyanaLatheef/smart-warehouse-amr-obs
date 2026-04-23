@@ -1,0 +1,17 @@
+# =============================================================
+# Smart Warehouse AMR — Python Dependencies
+# =============================================================
+# Install with:  pip3 install -r requirements.txt
+# Note: ROS 2 packages (rclpy, sensor_msgs, geometry_msgs, etc.)
+#       are provided by the ROS 2 Humble installation and are
+#       NOT installed via pip.
+# =============================================================
+
+# --- Serial communication (RPi ↔ Arduino) -------------------
+pyserial>=3.5
+
+# --- Build system (ROS 2 Python packages) --------------------
+setuptools>=58.0.0
+
+# --- Testing --------------------------------------------------
+pytest>=7.0
