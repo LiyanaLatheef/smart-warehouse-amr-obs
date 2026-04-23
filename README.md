@@ -17,6 +17,52 @@
 
 ---
 
+## ⚡ Quick Setup (One-Liners)
+
+> Want to run the project immediately? Open a fresh terminal and paste the relevant command below.  
+> It will automatically download the repository, install all ROS 2 and Python requirements, build the workspace, and launch the system!
+
+### 💻 1. Auto-Setup & Run: Simulation (PC/Laptop)
+
+*Use this on your Ubuntu laptop to automatically install Gazebo, Nav2, SLAM toolbox, build the workspace, and launch the digital twin with RViz.*
+
+```bash
+mkdir -p ~/amr_ws/src && cd ~/amr_ws/src \
+  && git clone https://github.com/LiyanaLatheef/smart-warehouse-amr-obs.git two_wheel_robot \
+  && cd ~/amr_ws \
+  && sudo apt update \
+  && sudo apt install ros-humble-desktop ros-humble-navigation2 ros-humble-nav2-bringup ros-humble-slam-toolbox python3-colcon-common-extensions -y \
+  && pip3 install -r src/two_wheel_robot/requirements.txt \
+  && source /opt/ros/humble/setup.bash \
+  && colcon build \
+  && source install/setup.bash \
+  && ros2 launch two_wheel_robot simulation.launch.py
+```
+
+### 🤖 2. Auto-Setup & Run: Physical Robot (Raspberry Pi)
+
+> ⚠️ **Hardware check:** Ensure RPLiDAR and Arduino are plugged into the Pi's USB ports first.
+
+*Use this on the Pi to automatically download the repo AND the RPLiDAR driver, install Python serial requirements, grant USB port permissions, and launch the hardware brain.*
+
+```bash
+mkdir -p ~/robot_ws/src && cd ~/robot_ws/src \
+  && git clone https://github.com/LiyanaLatheef/smart-warehouse-amr-obs.git two_wheel_robot \
+  && git clone -b ros2 https://github.com/Slamtec/rplidar_ros.git \
+  && cd ~/robot_ws \
+  && sudo apt update \
+  && sudo apt install ros-humble-ros-base python3-colcon-common-extensions -y \
+  && pip3 install -r src/two_wheel_robot/requirements.txt --break-system-packages \
+  && source /opt/ros/humble/setup.bash \
+  && colcon build \
+  && sudo chmod 777 /dev/ttyUSB0 \
+  && sudo chmod 666 /dev/ttyACM0 \
+  && source install/setup.bash \
+  && ros2 launch two_wheel_robot physical_robot.launch.py
+```
+
+---
+
 ## 📌 Project Overview
 
 This project implements a **Smart Warehouse AMR** capable of:
@@ -33,7 +79,7 @@ This project implements a **Smart Warehouse AMR** capable of:
 | Sensor | Simulated LiDAR | RPLiDAR A1 |
 | Motor Driver | Gazebo Diff Drive Plugin | L298N + Arduino Mega |
 | Navigation | Nav2 + SLAM Toolbox | avoid.py + vel_smoother |
-| Communication | ROS2 Topics | ROS2 + Serial (115200 baud) |
+| Communication | ROS2 Topics | ROS2 + Serial (57600 baud) |
 
 ---
 
@@ -42,65 +88,86 @@ This project implements a **Smart Warehouse AMR** capable of:
 
 ### Gazebo Simulation
 <!-- Replace with your actual screenshot -->
-![Gazebo Simulation](docs1/gazebospwn.png)
+![Gazebo Simulation](docs/gazebospwn.png)
 *Robot navigating warehouse in Gazebo 11 with LiDAR scan visible*
 
 ### RViz Visualization
 <!-- Replace with your actual screenshot -->
-![RViz LiDAR](docs1/rviz.png)
+![RViz LiDAR](docs/rviz.png)
 *Live LiDAR scan and robot model in RViz2*
 
 ### SLAM Map
 <!-- Replace with your actual screenshot -->
-![SLAM Map](docs1/Map.png)  
+![SLAM Map](docs/MAP.png)  
 *2D occupancy grid map generated using slam_toolbox*
 
 ### Circuit Diagram
 <!-- Replace with your actual photo -->
-![Circuit Diagram](docs1/diagram.jpeg)
+![Circuit Diagram](docs/diagram.jpeg)
 
 
 ### Physical Robot
 <!-- Replace with your actual photo -->
-![Physical Robot](docs1/physical_robot.jpeg)
+![Physical Robot](docs/physical_robot.jpeg)
 *Physical AMR with RPLiDAR A1, Arduino Mega, L298N motor driver on circular chassis*
 
 
 ### Gif
 
 *Moving Bot*  
-![Moving BOT](docs1/MovingBOT.gif)
+![Moving BOT](docs/MovingBOT.gif)
 
 *working simulation(Gazebo & Rviz)*  
-![Gazebo Rviz](docs1/GazeboRviz.gif)
+![Gazebo Rviz](docs/GazeboRviz.gif)
 
 ---
 
 ## 📁 Repository Structure
 
 ```
-digital_twin_ws/
-├── src/
-│   ├── two_wheel_robot/                    # Simulation package
-│   │   ├── urdf/
-│   │   │   └── two_wheel_robot.urdf        # Robot description (diff drive + LiDAR)
-│   │   ├── worlds/
-│   │   │   └── warehouse.world             # Gazebo warehouse environment
-│   │   ├── maps/
-│   │   │   ├── my_warehouse_map.pgm        # SLAM-generated map image
-│   │   │   └── my_warehouse_map.yaml       # Map metadata
-│   │   ├── config/
-│   │   │   ├── nav2_params.yaml            # Nav2 navigation parameters
-│   │   │   └── slam_params.yaml            # SLAM toolbox parameters
-│   │   └── launch/
-│   │       └── spawn_robot.launch.py       # Robot spawn launch file
-│   └── obstacle_avoidance/                 # Core logic package (shared: sim + real)
-│       └── obstacle_avoidance/
-│           ├── avoid.py                    # Zone-based obstacle avoidance node
-│           ├── vel_smoother.py             # Velocity ramping for smooth motion
-│           └── serial_bridge.py            # RPi ↔ Arduino serial communication
-└── firmware/
-    └── motor_control.ino                   # Arduino Mega motor control code
+smart-warehouse-amr-obs/
+├── .gitignore
+├── README.md
+├── requirements.txt                         # Python pip dependencies
+├── docs/                                    # Images, GIFs, and media
+│   ├── gazebospwn.png
+│   ├── rviz.png
+│   ├── MAP.png
+│   ├── diagram.jpeg
+│   ├── physical_robot.jpeg
+│   ├── MovingBOT.gif
+│   └── GazeboRviz.gif
+├── firmware/
+│   └── motor_control.ino                    # Arduino Mega motor control
+└── src/
+    ├── two_wheel_robot/                     # Simulation package
+    │   ├── urdf/
+    │   │   └── two_wheel_robot.urdf         # Robot description (diff drive + LiDAR)
+    │   ├── worlds/
+    │   │   └── warehouse.world              # Gazebo warehouse environment
+    │   ├── maps/
+    │   │   ├── my_warehouse_map.pgm         # SLAM-generated map image
+    │   │   └── my_warehouse_map.yaml        # Map metadata
+    │   ├── config/
+    │   │   ├── nav2_params.yaml             # Nav2 navigation parameters
+    │   │   └── slam_params.yaml             # SLAM toolbox parameters
+    │   ├── launch/
+    │   │   ├── spawn_robot.launch.py        # Robot spawn launch file
+    │   │   ├── simulation.launch.py         # Full simulation launch
+    │   │   ├── mapping.launch.py            # SLAM mapping launch
+    │   │   ├── physical_robot.launch.py     # Physical robot launch
+    │   │   └── warehouse_nav2.launch.py     # Nav2 navigation launch
+    │   ├── avoid.py                         # Physical robot avoidance (serial)
+    │   ├── setup.py
+    │   └── package.xml
+    ├── obstacle_avoidance/                  # Core logic package (shared: sim + real)
+    │   └── obstacle_avoidance/
+    │       ├── avoid.py                     # Zone-based obstacle avoidance node
+    │       ├── vel_smoother.py              # Velocity ramping for smooth motion
+    │       └── waypoint_nav.py              # Waypoint-based navigation
+    └── my_robot/                            # Additional robot package
+        ├── setup.py
+        └── package.xml
 ```
 
 ---
@@ -170,7 +237,37 @@ RPi powered by separate 5V USB-C adapter
 | Nav2 | - | Autonomous navigation |
 | rplidar_ros | ros2 branch | LiDAR driver |
 | Python | 3.10 | Node scripting |
-| pyserial | - | Arduino communication |
+| pyserial | ≥3.5 | Arduino communication |
+
+---
+
+## 📦 Requirements
+
+### ROS 2 / System Dependencies (via `apt`)
+
+```bash
+sudo apt install ros-humble-desktop -y
+sudo apt install ros-humble-navigation2 ros-humble-nav2-bringup -y
+sudo apt install ros-humble-slam-toolbox -y
+```
+
+### Python Dependencies (via `pip`)
+
+All Python pip dependencies are listed in [`requirements.txt`](requirements.txt):
+
+| Package | Version | Purpose |
+|---|---|---|
+| `pyserial` | ≥ 3.5 | Serial communication between RPi and Arduino |
+| `setuptools` | ≥ 58.0.0 | ROS 2 Python package build system |
+| `pytest` | ≥ 7.0 | Running unit tests |
+
+Install with:
+
+```bash
+pip3 install -r requirements.txt
+```
+
+> **Note:** ROS 2 Python packages (`rclpy`, `sensor_msgs`, `geometry_msgs`, `nav_msgs`) are provided by the ROS 2 Humble installation and are **not** installed via pip.
 
 ---
 
@@ -185,18 +282,28 @@ sudo apt install ros-humble-desktop -y
 sudo apt install ros-humble-navigation2 ros-humble-nav2-bringup -y
 sudo apt install ros-humble-slam-toolbox -y
 source /opt/ros/humble/setup.bash
-```###Phase 2: Map & Transformation
+```
 
 ### Clone and Build
 
 ```bash
 # Clone the repository
-git clone [https://github.com/LiyanaLatheef/smart-warehouse-amr-obs.git](https://github.com/LiyanaLatheef/smart-warehouse-amr-obs.git)
+git clone https://github.com/LiyanaLatheef/smart-warehouse-amr-obs.git
 cd smart-warehouse-amr-obs
+
+# Install Python dependencies
+pip3 install -r requirements.txt
 
 # Build
 colcon build
 source install/setup.bash
+```
+
+#### 🚀 One-Click Launch (after build)
+
+```bash
+# Launch full simulation (Gazebo + RViz + obstacle avoidance)
+ros2 launch two_wheel_robot simulation.launch.py
 ```
 
 ### RPi Setup (Physical Robot Only)
@@ -205,12 +312,14 @@ source install/setup.bash
 # Install ROS2 Humble on Raspberry Pi (Ubuntu 22.04 aarch64)
 sudo apt update && sudo apt install ros-humble-ros-base -y
 
-# Install pyserial
-pip3 install pyserial --break-system-packages
-
 # Clone repo on RPi
 git clone https://github.com/LiyanaLatheef/smart-warehouse-amr-obs.git ~/robot_ws/src/
 cd ~/robot_ws
+
+# Install Python dependencies
+pip3 install -r src/smart-warehouse-amr-obs/requirements.txt --break-system-packages
+
+# Build
 colcon build
 source install/setup.bash
 
@@ -221,6 +330,24 @@ cd ~/robot_ws
 colcon build --packages-select rplidar_ros
 source install/setup.bash
 ```
+
+#### 🚀 One-Click Launch (after build)
+
+```bash
+# Grant USB permissions + launch physical robot
+sudo chmod 777 /dev/ttyUSB0 && sudo chmod 666 /dev/ttyACM0
+ros2 launch two_wheel_robot physical_robot.launch.py
+```
+
+### 📋 Available Launch Files
+
+| Launch File | Command | Description |
+|---|---|---|
+| **Simulation** | `ros2 launch two_wheel_robot simulation.launch.py` | Full Gazebo + RViz digital twin |
+| **Physical Robot** | `ros2 launch two_wheel_robot physical_robot.launch.py` | RPLiDAR + obstacle avoidance on Pi |
+| **SLAM Mapping** | `ros2 launch two_wheel_robot mapping.launch.py` | Generate warehouse map |
+| **Nav2 Navigation** | `ros2 launch two_wheel_robot warehouse_nav2.launch.py` | Autonomous goal navigation |
+| **Spawn Only** | `ros2 launch two_wheel_robot spawn_robot.launch.py` | Spawn robot in Gazebo only |
 
 ---
 
@@ -383,7 +510,7 @@ float speed_limit = 1.5;  // 75% max speed (safe for warehouse)
 
 The warehouse map was generated using `slam_toolbox` in async mapping mode.
 
-![Warehouse Map](docs/images/warehouse_map.png)
+![Warehouse Map](docs/MAP.png)
 
 - **Black lines** = walls and shelves detected by LiDAR
 - **White areas** = free space (robot can navigate)
@@ -439,15 +566,10 @@ The warehouse map was generated using `slam_toolbox` in async mapping mode.
 | Name | Register No | Role |
 |---|---|---|
 | Nafeesath Liyana Latheef | 23BCARI117 | Simulation, Hardware Integration, ROS2 |
-| Muhammed Mishal | 23BCARI101 | Hardware Assembly, Testing |
+| Muhammed Mishal | - | Hardware Assembly, Testing |
 
 **Internal Guide:** Rakesh K K  
 **Institution:** Yenepoya Institute of Arts, Science, Commerce and Management  
 **Program:** BCA (Artificial Intelligence, Machine Learning, Robotics & IoT)
 
 ---
-
-
-
-
-
