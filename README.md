@@ -52,17 +52,13 @@ This project implements a **Smart Warehouse AMR** capable of:
 
 ### SLAM Map
 <!-- Replace with your actual screenshot -->
-![SLAM Map](docs1/Map.png)
+![SLAM Map](docs1/Map.png)  
 *2D occupancy grid map generated using slam_toolbox*
 
 ### Circuit Diagram
 <!-- Replace with your actual photo -->
-![Circuit Diagram](docs/diagram.jpeg)
+![Circuit Diagram](docs1/diagram.jpeg)
 
-### Nav2 Navigation
-<!-- Replace with your actual screenshot -->
-![Nav2](docs/images/nav2_map.png)
-*Robot localizing and navigating using Nav2 with saved warehouse map*
 
 ### Physical Robot
 <!-- Replace with your actual photo -->
@@ -213,7 +209,7 @@ sudo apt update && sudo apt install ros-humble-ros-base -y
 pip3 install pyserial --break-system-packages
 
 # Clone repo on RPi
-git clone https://github.com/LiyanaLatheef/Smart-Warehouse-AMR-with-Dynamic-Obstacle-Avoidance.git ~/robot_ws/src/
+git clone https://github.com/LiyanaLatheef/smart-warehouse-amr-obs.git ~/robot_ws/src/
 cd ~/robot_ws
 colcon build
 source install/setup.bash
@@ -286,7 +282,7 @@ ros2 run slam_toolbox async_slam_toolbox_node --ros-args \
 ros2 run nav2_map_server map_saver_cli -f ~/my_warehouse_map
 ```
 
-### Nav2 Autonomous Navigation
+### Nav2 Autonomous Navigation(optional)
 
 ```bash
 # Load saved map and launch Nav2
