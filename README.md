@@ -439,7 +439,7 @@ The warehouse map was generated using `slam_toolbox` in async mapping mode.
 | Name | Register No | Role |
 |---|---|---|
 | Nafeesath Liyana Latheef | 23BCARI117 | Simulation, Hardware Integration, ROS2 |
-| Muhammed Mishal | - | Hardware Assembly, Testing |
+| Muhammed Mishal | 23BCARI101 | Hardware Assembly, Testing |
 
 **Internal Guide:** Rakesh K K  
 **Institution:** Yenepoya Institute of Arts, Science, Commerce and Management  
