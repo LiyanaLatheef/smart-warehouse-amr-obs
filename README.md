@@ -9,7 +9,7 @@
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
 **A fully functional Autonomous Mobile Robot (AMR) with real-time LiDAR-based obstacle avoidance,**  
-**SLAM mapping, and Nav2 navigation — running in both Gazebo simulation and physical hardware.**
+**SLAM mapping— running in both Gazebo simulation and physical hardware.**
 
 [Simulation](#-simulation-digital-twin) • [Physical Robot](#-physical-robot) • [Setup](#-installation) • [Run](#-running-the-project)
 
